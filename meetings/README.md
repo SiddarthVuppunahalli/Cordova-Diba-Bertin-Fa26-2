@@ -10,6 +10,7 @@ Meeting records covering **Workbook 1 → Workbook 2** (submission: December 202
 **Project resources**
 - [Abstract versions (Google Drive)](https://drive.google.com/drive/folders/188CRtjxIplUySTPhnxh9UzOlGY29cpUk?usp=sharing) — every draft and revision of the abstract
 - [Shared working doc](https://docs.google.com/document/d/1TOybmzXKISLafO4h4UUBEd6wmVYEWW1DAyPc77wV7UI/edit?tab=t.w61wv9ea0kaf) — related-work reading list and each member's findings on the papers they read, the real-world scenario enumeration, and each member's abstract pitfalls write-up
+- [Shared working doc — repository analysis tab](https://docs.google.com/document/d/1TOybmzXKISLafO4h4UUBEd6wmVYEWW1DAyPc77wV7UI/edit?tab=t.jvmv86yfccn0) — repository claims and merge-conflict scenarios mined from public GitHub projects
 
 Required cadence:
 - **Advisor meetings** (team + project advisor): ≥1 every two weeks
@@ -32,7 +33,7 @@ Required cadence:
 | Week | Dates | Team-Only | Advisor | Notes |
 |---|---|---|---|---|
 | W1 | 2026-08-31 → 2026-09-06 | [09-01](./2026-09-01-team.md) · [09-03](./2026-09-03-team.md) · [09-04](./2026-09-04-team.md) · [09-06](./2026-09-06-team.md) | [09-02](./2026-09-02-advisor.md) | Kickoff, direction set with advisor, abstract submitted and resubmitted after instructor feedback |
-| W2 | 2026-09-07 → 2026-09-13 | | — (not due until 2026-09-16) | |
+| W2 | 2026-09-07 → 2026-09-13 | [09-12](./2026-09-12-team.md) | — (not due until 2026-09-16) | Findings on all assigned papers in; plan to mine real merge conflicts from public GitHub repositories |
 | W3 | 2026-09-14 → 2026-09-20 | | | |
 | W4 | 2026-09-21 → 2026-09-27 | | | |
 | W5 | 2026-09-28 → 2026-10-04 | | | |
@@ -43,12 +44,13 @@ Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 
 | ID | Action | Owner | Due | Status | Opened in |
 |---|---|---|---|---|---|
-| AI-20260906-04 | Enumerate real-world multi-developer + individual-coding-agent scenarios and their failure modes — advisor's explicit assignment, originally AI-20260902-01 | All | **overdue since 2026-09-04** | In progress | [09-02](./2026-09-02-advisor.md) → [09-06](./2026-09-06-team.md) |
-| AI-20260906-05 | Read paper 3, Collaborative Memory | Anurag Bodapally | before next team meeting | **Done 2026-09-09** | [09-06](./2026-09-06-team.md) |
-| AI-20260906-06 | Read paper 6, Brindescu et al. (ICSE 2020) | Shubham Baid | before next team meeting | **Done 2026-09-09** | [09-06](./2026-09-06-team.md) |
-| AI-20260906-07 | Survey topic 9 and read paper 10 (speculative execution) | Siddarth Vuppunahalli | before next team meeting | **Done 2026-09-09** | [09-06](./2026-09-06-team.md) |
-| AI-20260906-09 | Assign owners for topics 7 and 8 | All | before next team meeting | Open | [09-06](./2026-09-06-team.md) |
-| AI-20260906-08 | Write the novelty-versus-prior-work comparison using papers 1, 2, 4, 5 | Anurag Bodapally, Dhruv Verma | before next team meeting | Open | [09-06](./2026-09-06-team.md) |
+| AI-20260912-01 | Claim repositories in the shared doc before starting analysis | All (individually) | before starting analysis | Open | [09-12](./2026-09-12-team.md) |
+| AI-20260912-02 | Analyze git histories of public GitHub repositories for merge conflicts, using Claude, Codex, or similar — continues the advisor's scenario assignment (AI-20260902-01 → AI-20260906-04) | All (individually) | 2026-09-15 | Open | [09-02](./2026-09-02-advisor.md) → [09-12](./2026-09-12-team.md) |
+| AI-20260912-03 | Record each conflict's scenario and whether earlier shared context would have helped | All (individually) | 2026-09-15 | Open | [09-12](./2026-09-12-team.md) |
+| AI-20260912-04 | Present individual progress at the team check-in | All | 2026-09-15 | Open | [09-12](./2026-09-12-team.md) |
+| AI-20260912-05 | Consolidate scenarios into one set for the advisor | All | 2026-09-16 | Open | [09-12](./2026-09-12-team.md) |
+| AI-20260906-08 | Write the novelty-versus-prior-work comparison | Anurag Bodapally, Dhruv Verma | carried forward | Open | [09-06](./2026-09-06-team.md) |
+| AI-20260906-09 | Assign owners for topics 7 and 8 | All | carried forward | Open | [09-06](./2026-09-06-team.md) |
 
 ## Related-Work Reading List
 
@@ -89,3 +91,8 @@ Findings go in the [shared working doc](https://docs.google.com/document/d/1TOyb
 | D-20260906-06 | Evaluate on reconstructed integration failures: time-to-notice and rework | 2026-09-06 | [09-06](./2026-09-06-team.md) |
 | D-20260906-07 | Revise the existing Direction 1 abstract rather than write a new one | 2026-09-06 | [09-06](./2026-09-06-team.md) |
 | D-20260906-08 | Revise live on the call as a full team; only final sign-off async in group chat | 2026-09-06 | [09-06](./2026-09-06-team.md) |
+| D-20260912-01 | Ground scenario enumeration in real merge conflicts mined from public GitHub repositories | 2026-09-12 | [09-12](./2026-09-12-team.md) |
+| D-20260912-02 | Use AI coding assistants to analyze repository git histories | 2026-09-12 | [09-12](./2026-09-12-team.md) |
+| D-20260912-03 | Search for conflict types beyond the abstract, to broaden scope | 2026-09-12 | [09-12](./2026-09-12-team.md) |
+| D-20260912-04 | Claim repositories in the shared doc before analyzing; document all work there | 2026-09-12 | [09-12](./2026-09-12-team.md) |
+| D-20260912-05 | Team check-in 2026-09-15 before the 2026-09-16 advisor meeting | 2026-09-12 | [09-12](./2026-09-12-team.md) |
