@@ -34,7 +34,7 @@ Required cadence:
 |---|---|---|---|---|
 | W1 | 2026-08-31 → 2026-09-06 | [09-01](./2026-09-01-team.md) · [09-03](./2026-09-03-team.md) · [09-04](./2026-09-04-team.md) · [09-06](./2026-09-06-team.md) | [09-02](./2026-09-02-advisor.md) | Kickoff, direction set with advisor, abstract submitted and resubmitted after instructor feedback |
 | W2 | 2026-09-07 → 2026-09-13 | [09-12](./2026-09-12-team.md) | — (not due until 2026-09-16) | Findings on all assigned papers in; plan to mine real merge conflicts from public GitHub repositories |
-| W3 | 2026-09-14 → 2026-09-20 | | | |
+| W3 | 2026-09-14 → 2026-09-20 | [09-15](./2026-09-15-team.md) | [09-16](./2026-09-16-advisor.md) | Repository analyses pooled and classified into five conflict categories; plan to recreate them on a Marketplace fixture presented to the advisor and endorsed; advisor marked the two-semester split — 295A scope/research/architecture, 295B build |
 | W4 | 2026-09-21 → 2026-09-27 | | | |
 | W5 | 2026-09-28 → 2026-10-04 | | | |
 
@@ -44,13 +44,19 @@ Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 
 | ID | Action | Owner | Due | Status | Opened in |
 |---|---|---|---|---|---|
-| AI-20260912-01 | Claim repositories in the shared doc before starting analysis | All (individually) | before starting analysis | Open | [09-12](./2026-09-12-team.md) |
-| AI-20260912-02 | Analyze git histories of public GitHub repositories for merge conflicts, using Claude, Codex, or similar — continues the advisor's scenario assignment (AI-20260902-01 → AI-20260906-04) | All (individually) | 2026-09-15 | Open | [09-02](./2026-09-02-advisor.md) → [09-12](./2026-09-12-team.md) |
-| AI-20260912-03 | Record each conflict's scenario and whether earlier shared context would have helped | All (individually) | 2026-09-15 | Open | [09-12](./2026-09-12-team.md) |
-| AI-20260912-04 | Present individual progress at the team check-in | All | 2026-09-15 | Open | [09-12](./2026-09-12-team.md) |
-| AI-20260912-05 | Consolidate scenarios into one set for the advisor | All | 2026-09-16 | Open | [09-12](./2026-09-12-team.md) |
+| AI-20260916-01 | Finalize model-selection criteria conditions and pick the top 5 models | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-02 | Refine the initial idea into a finalized architecture | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-03 | Work out how the multi-part agent system is implemented (per-developer agent + orchestrator + verification agent) | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-04 | Technology selection for the shared-context store (Redis, Postgres, etc.) | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-05 | Rank the conflict categories by complexity and priority; add/modify categories as justified | All | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-06 | Reverse engineer a situation per conflict category on a real repo and create a demo | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| — | Fork Campus Marketplace and freeze a `lab-baseline` SHA (never push to the Classroom original) | Dhruv Verma | before next advisor meeting | Open | [09-15](./2026-09-15-team.md) |
 | AI-20260906-08 | Write the novelty-versus-prior-work comparison | Anurag Bodapally, Dhruv Verma | carried forward | Open | [09-06](./2026-09-06-team.md) |
 | AI-20260906-09 | Assign owners for topics 7 and 8 | All | carried forward | Open | [09-06](./2026-09-06-team.md) |
+
+Closed since last update: AI-20260912-01 … -05 and AI-20260915-01 … -03 — all Done, see
+[09-15](./2026-09-15-team.md) §1 and [09-16](./2026-09-16-advisor.md) §1. This also closes the
+advisor's 2026-09-02 scenario assignment (AI-20260902-01 → AI-20260906-04 → AI-20260912-02/-03).
 
 ## Related-Work Reading List
 
@@ -96,3 +102,17 @@ Findings go in the [shared working doc](https://docs.google.com/document/d/1TOyb
 | D-20260912-03 | Search for conflict types beyond the abstract, to broaden scope | 2026-09-12 | [09-12](./2026-09-12-team.md) |
 | D-20260912-04 | Claim repositories in the shared doc before analyzing; document all work there | 2026-09-12 | [09-12](./2026-09-12-team.md) |
 | D-20260912-05 | Team check-in 2026-09-15 before the 2026-09-16 advisor meeting | 2026-09-12 | [09-12](./2026-09-12-team.md) |
+| D-20260915-01 | Adopt five primary groups as the classification of the mined corpus | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260915-02 | Record every incident as cause + interaction scope + outcome | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260915-03 | Mark change overlap and coordination/timing as small-repo-characteristic; coordination/timing subject to change | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260915-04 | Present three recurring use cases to the advisor, with the five-group table as backing | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260915-05 | Recreate the conflict categories on a codebase we can all run; large repos are problem definition, not evaluation | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260915-06 | Use a Campus Marketplace clone/fork frozen at `lab-baseline` as the replay fixture | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260915-07 | Four scripted lab tasks scored across four conditions (no feed / file overlap / ungated / gated) | 2026-09-15 | [09-15](./2026-09-15-team.md) |
+| D-20260916-01 | Categorized corpus and recreate-on-a-fixture plan accepted as the project's direction | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260916-02 | Architecture is a multi-part agent system: per-developer agent above each coding agent, coordinated by an orchestrator | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260916-03 | Role-based shared context, enforced by a verification agent | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260916-04 | Rank conflict categories by complexity and priority before building; stay open to changing them | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260916-05 | Each category must be reverse-engineered on a real repo and demonstrated | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260916-06 | 295A = scope, problem definition, research, architecture (iterative); 295B = building. A prototype by end of 295A is welcome but not required — consolidation is the bar | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260916-07 | Campus Marketplace is the starting-point fixture; other codebases stay open as findings justify | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
