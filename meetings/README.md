@@ -36,7 +36,7 @@ Required cadence:
 | W2 | 2026-09-07 → 2026-09-13 | [09-12](./2026-09-12-team.md) | — (not due until 2026-09-16) | Findings on all assigned papers in; plan to mine real merge conflicts from public GitHub repositories |
 | W3 | 2026-09-14 → 2026-09-20 | [09-15](./2026-09-15-team.md) | [09-16](./2026-09-16-advisor.md) | Repository analyses pooled and classified into five conflict categories; plan to recreate them on a Marketplace fixture presented to the advisor and endorsed; advisor marked the two-semester split — 295A scope/research/architecture, 295B build |
 | W4 | 2026-09-21 → 2026-09-27 | [09-26](./2026-09-26-team.md) | — (not due until 2026-09-30) | Conflict categories ranked by priority and complexity; integration validation failure treated as a common fourth layer; five-stage process flow drafted. Planned 09-22 team meeting not held (member obligations); owner split deferred to 09-30 |
-| W5 | 2026-09-28 → 2026-10-04 | [09-29](./2026-09-29-team.md) · [09-30](./2026-09-30-team.md) | [09-30](./2026-09-30-advisor.md) | PostgreSQL and JSON manifest chosen; demo scenarios presented to advisor, who asked for an architecture and component deep dive and a reworded priority/complexity ranking before the next advisor meeting; Workbook 1 finalized and submitted |
+| W5 | 2026-09-28 → 2026-10-04 | [09-29](./2026-09-29-team.md) · [09-30](./2026-09-30-team.md) | [09-30](./2026-09-30-advisor.md) | PostgreSQL and JSON manifest chosen; demo scenarios presented to advisor, who asked for an architecture and component deep dive before the next advisor meeting; priority/complexity ranking reworded with the advisor on the call; Workbook 1 finalized and submitted |
 
 Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 
@@ -45,7 +45,6 @@ Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 | ID | Action | Owner | Due | Status | Opened in |
 |---|---|---|---|---|---|
 | AI-20260930-01 | Deep-dive the architecture and finalize each component of the system | All — each member deep-dives their own components (D-20260930-05) | next advisor meeting (by 2026-10-14) | Open | [09-30 advisor](./2026-09-30-advisor.md) |
-| AI-20260930-02 | Reword the priority/complexity ranking so it describes each category accurately | All | next advisor meeting (by 2026-10-14) | Open | [09-30 advisor](./2026-09-30-advisor.md) |
 | AI-20260930-03 | Prototype Git observation and define the developer-agent interface | Anurag Bodapally | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
 | AI-20260930-04 | Define the API, evidence, verification and database contracts | Dhruv Verma | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
 | AI-20260930-05 | Convert the conflict taxonomy into positive and negative test scenarios | Shubham Baid | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
@@ -59,8 +58,9 @@ Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 | AI-20260906-09 | Assign owners for topics 7 and 8 | All | carried forward | Open | [09-06](./2026-09-06-team.md) |
 
 Closed since last update: AI-20260916-05 (ranking, D-20260926-01), AI-20260926-01 and -02,
-AI-20260916-04 (PostgreSQL, D-20260929-01) and AI-20260929-01 — all Done, see
-[09-26](./2026-09-26-team.md) §1, [09-29](./2026-09-29-team.md) §1 and [09-30](./2026-09-30-advisor.md) §1.
+AI-20260916-04 (PostgreSQL, D-20260929-01), AI-20260929-01 and AI-20260930-02 (ranking reworded with
+the advisor on the call) — all Done, see [09-26](./2026-09-26-team.md) §1, [09-29](./2026-09-29-team.md) §1,
+[09-30 advisor](./2026-09-30-advisor.md) §1 and [09-30 team](./2026-09-30-team.md) §1.
 
 ## Related-Work Reading List
 
@@ -126,7 +126,7 @@ Findings go in the [shared working doc](https://docs.google.com/document/d/1TOyb
 | D-20260929-01 | PostgreSQL with JSONB columns for the shared-context store; MongoDB rejected | 2026-09-29 | [09-29](./2026-09-29-team.md) |
 | D-20260929-02 | Local agents push context as a structured JSON manifest of metadata and evidence references — no raw source code | 2026-09-29 | [09-29](./2026-09-29-team.md) |
 | D-20260930-01 | Spend the two weeks until the next advisor meeting on an architecture and component deep dive | 2026-09-30 | [09-30 advisor](./2026-09-30-advisor.md) |
-| D-20260930-02 | Reword the priority/complexity ranking as the advisor asked; priorities unchanged unless the rewording shows otherwise | 2026-09-30 | [09-30 advisor](./2026-09-30-advisor.md) |
+| D-20260930-02 | Priority/complexity ranking reworded with the advisor on the call so it describes each category accurately | 2026-09-30 | [09-30 advisor](./2026-09-30-advisor.md) |
 | D-20260930-03 | Workbook 1 chapter ownership — one named member does the final synthesis of each chapter | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |
 | D-20260930-04 | Detector order: change overlap first; contract divergence is the target detector for the 2026-12-04 demonstration; integration check planned for 295B | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |
 | D-20260930-05 | Prototype component ownership, one set of components per member | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |
