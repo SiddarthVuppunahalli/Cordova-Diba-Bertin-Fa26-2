@@ -21,7 +21,7 @@ Required cadence:
 - One file per meeting: `YYYY-MM-DD-advisor.md` or `YYYY-MM-DD-team.md`
   (two of the same type on one day: `YYYY-MM-DD-team-2.md`).
 - Structure follows the course-provided template verbatim — see [`TEMPLATE.md`](./TEMPLATE.md).
-  Generate a new note with `./new-meeting.sh team` or `./new-meeting.sh advisor 2026-09-15`.
+  To start a new note, copy `TEMPLATE.md` to `YYYY-MM-DD-team.md` or `YYYY-MM-DD-advisor.md`.
 - **Commit each note within 24 hours of the meeting.** Git timestamps are the only
   evidence a grader has that notes were posted promptly. One commit per meeting.
 - Stable IDs make action items traceable across notes:
@@ -35,8 +35,8 @@ Required cadence:
 | W1 | 2026-08-31 → 2026-09-06 | [09-01](./2026-09-01-team.md) · [09-03](./2026-09-03-team.md) · [09-04](./2026-09-04-team.md) · [09-06](./2026-09-06-team.md) | [09-02](./2026-09-02-advisor.md) | Kickoff, direction set with advisor, abstract submitted and resubmitted after instructor feedback |
 | W2 | 2026-09-07 → 2026-09-13 | [09-12](./2026-09-12-team.md) | — (not due until 2026-09-16) | Findings on all assigned papers in; plan to mine real merge conflicts from public GitHub repositories |
 | W3 | 2026-09-14 → 2026-09-20 | [09-15](./2026-09-15-team.md) | [09-16](./2026-09-16-advisor.md) | Repository analyses pooled and classified into five conflict categories; plan to recreate them on a Marketplace fixture presented to the advisor and endorsed; advisor marked the two-semester split — 295A scope/research/architecture, 295B build |
-| W4 | 2026-09-21 → 2026-09-27 | | | |
-| W5 | 2026-09-28 → 2026-10-04 | | | |
+| W4 | 2026-09-21 → 2026-09-27 | [09-26](./2026-09-26-team.md) | — (not due until 2026-09-30) | Conflict categories ranked by priority and complexity; integration validation failure treated as a common fourth layer; five-stage process flow drafted. Planned 09-22 team meeting not held (member obligations); owner split deferred to 09-30 |
+| W5 | 2026-09-28 → 2026-10-04 | [09-29](./2026-09-29-team.md) · [09-30](./2026-09-30-team.md) | [09-30](./2026-09-30-advisor.md) | PostgreSQL and JSON manifest chosen; demo scenarios presented to advisor, who asked for an architecture and component deep dive and a reworded priority/complexity ranking before the next advisor meeting; Workbook 1 finalized and submitted |
 
 Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 
@@ -44,19 +44,23 @@ Legend: `—` = not due this week · `⚠️` = missed, with reason in Notes
 
 | ID | Action | Owner | Due | Status | Opened in |
 |---|---|---|---|---|---|
-| AI-20260916-01 | Finalize model-selection criteria conditions and pick the top 5 models | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
-| AI-20260916-02 | Refine the initial idea into a finalized architecture | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
-| AI-20260916-03 | Work out how the multi-part agent system is implemented (per-developer agent + orchestrator + verification agent) | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
-| AI-20260916-04 | Technology selection for the shared-context store (Redis, Postgres, etc.) | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
-| AI-20260916-05 | Rank the conflict categories by complexity and priority; add/modify categories as justified | All | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
-| AI-20260916-06 | Reverse engineer a situation per conflict category on a real repo and create a demo | Unassigned — split 2026-09-22 | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260930-01 | Deep-dive the architecture and finalize each component of the system | All — each member deep-dives their own components (D-20260930-05) | next advisor meeting (by 2026-10-14) | Open | [09-30 advisor](./2026-09-30-advisor.md) |
+| AI-20260930-02 | Reword the priority/complexity ranking so it describes each category accurately | All | next advisor meeting (by 2026-10-14) | Open | [09-30 advisor](./2026-09-30-advisor.md) |
+| AI-20260930-03 | Prototype Git observation and define the developer-agent interface | Anurag Bodapally | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
+| AI-20260930-04 | Define the API, evidence, verification and database contracts | Dhruv Verma | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
+| AI-20260930-05 | Convert the conflict taxonomy into positive and negative test scenarios | Shubham Baid | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
+| AI-20260930-06 | Select the first notification interface and replay scenario | Siddarth Vuppunahalli | 2026-10-09 | Open | [09-30 team](./2026-09-30-team.md) |
+| AI-20260916-01 | Finalize model-selection criteria conditions and pick the top 5 models | All | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-02 | Refine the initial idea into a finalized architecture | All | before next advisor meeting | In progress | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-03 | Work out how the multi-part agent system is implemented (per-developer agent + orchestrator + verification agent) | Anurag Bodapally, Dhruv Verma, Siddarth Vuppunahalli — by component (D-20260930-05) | before next advisor meeting | In progress | [09-16](./2026-09-16-advisor.md) |
+| AI-20260916-06 | Reverse engineer a situation per conflict category on a real repo and create a demo | All | before next advisor meeting | Open | [09-16](./2026-09-16-advisor.md) |
 | — | Fork Campus Marketplace and freeze a `lab-baseline` SHA (never push to the Classroom original) | Dhruv Verma | before next advisor meeting | Open | [09-15](./2026-09-15-team.md) |
 | AI-20260906-08 | Write the novelty-versus-prior-work comparison | Anurag Bodapally, Dhruv Verma | carried forward | Open | [09-06](./2026-09-06-team.md) |
 | AI-20260906-09 | Assign owners for topics 7 and 8 | All | carried forward | Open | [09-06](./2026-09-06-team.md) |
 
-Closed since last update: AI-20260912-01 … -05 and AI-20260915-01 … -03 — all Done, see
-[09-15](./2026-09-15-team.md) §1 and [09-16](./2026-09-16-advisor.md) §1. This also closes the
-advisor's 2026-09-02 scenario assignment (AI-20260902-01 → AI-20260906-04 → AI-20260912-02/-03).
+Closed since last update: AI-20260916-05 (ranking, D-20260926-01), AI-20260926-01 and -02,
+AI-20260916-04 (PostgreSQL, D-20260929-01) and AI-20260929-01 — all Done, see
+[09-26](./2026-09-26-team.md) §1, [09-29](./2026-09-29-team.md) §1 and [09-30](./2026-09-30-advisor.md) §1.
 
 ## Related-Work Reading List
 
@@ -116,3 +120,14 @@ Findings go in the [shared working doc](https://docs.google.com/document/d/1TOyb
 | D-20260916-05 | Each category must be reverse-engineered on a real repo and demonstrated | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
 | D-20260916-06 | 295A = scope, problem definition, research, architecture (iterative); 295B = building. A prototype by end of 295A is welcome but not required — consolidation is the bar | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
 | D-20260916-07 | Campus Marketplace is the starting-point fixture; other codebases stay open as findings justify | 2026-09-16 | [09-16](./2026-09-16-advisor.md) |
+| D-20260926-01 | Priority/complexity ranking: contract divergence 1, dependency propagation 2, change overlap 3, integration validation failure 4, coordination and timing 5 (subject to removal) | 2026-09-26 | [09-26](./2026-09-26-team.md) |
+| D-20260926-02 | Integration validation failure is a common fourth layer checked across the other three, not an independent root cause | 2026-09-26 | [09-26](./2026-09-26-team.md) |
+| D-20260926-03 | Five-stage pipeline: identification → validation before shared memory → scoring → notification → suggested action generation | 2026-09-26 | [09-26](./2026-09-26-team.md) |
+| D-20260929-01 | PostgreSQL with JSONB columns for the shared-context store; MongoDB rejected | 2026-09-29 | [09-29](./2026-09-29-team.md) |
+| D-20260929-02 | Local agents push context as a structured JSON manifest of metadata and evidence references — no raw source code | 2026-09-29 | [09-29](./2026-09-29-team.md) |
+| D-20260930-01 | Spend the two weeks until the next advisor meeting on an architecture and component deep dive | 2026-09-30 | [09-30 advisor](./2026-09-30-advisor.md) |
+| D-20260930-02 | Reword the priority/complexity ranking as the advisor asked; priorities unchanged unless the rewording shows otherwise | 2026-09-30 | [09-30 advisor](./2026-09-30-advisor.md) |
+| D-20260930-03 | Workbook 1 chapter ownership — one named member does the final synthesis of each chapter | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |
+| D-20260930-04 | Detector order: change overlap first; contract divergence is the target detector for the 2026-12-04 demonstration; integration check planned for 295B | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |
+| D-20260930-05 | Prototype component ownership, one set of components per member | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |
+| D-20260930-06 | Architecture recorded in Workbook Ch5: layered, service-oriented, pipe-and-filter core; verification both local and central so raw code stays private | 2026-09-30 | [09-30 team](./2026-09-30-team.md) |

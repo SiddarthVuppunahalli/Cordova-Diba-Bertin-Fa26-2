@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Illustrative process-flow walkthrough shown to the advisor on 2026-09-30.
+     File names, fields and scores are made up for the Campus Marketplace fixture;
+     they show intended pipeline behaviour, not measured results. -->
+<title>Shared Memory Demo Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header + scenario switcher → step rail → system diagram (lights up per step) → narration + evidence → prev/next */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --fg:#1b2230; --muted:#5b6578; --line:#d5dae3;
+  --accent:#2f5bd3; --accent-soft:#e3eafb; --on-accent:#ffffff;
+  --warn:#9a6414; --warn-soft:#fbf1dd; --bad:#c2410c; --bad-soft:#fde7dc; --ok:#1f7a4d; --ok-soft:#dcf2e6;
+  --dim:#c3cad6;
+  --f-sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161f; --surface:#1a2030; --fg:#e6e9f0; --muted:#98a2b5; --line:#2c3446;
+  --accent:#7ea2ff; --accent-soft:#223056; --on-accent:#0d1220;
+  --warn:#e3a94a; --warn-soft:#3a2e17; --bad:#f08a5d; --bad-soft:#3d2219; --ok:#5fc890; --ok-soft:#173226;
+  --dim:#3a4459; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#12161f; --surface:#1a2030; --fg:#e6e9f0; --muted:#98a2b5; --line:#2c3446;
+  --accent:#7ea2ff; --accent-soft:#223056; --on-accent:#0d1220;
+  --warn:#e3a94a; --warn-soft:#3a2e17; --bad:#f08a5d; --bad-soft:#3d2219; --ok:#5fc890; --ok-soft:#173226;
+  --dim:#3a4459; color-scheme:dark;}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:15px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:24px 48px;display:grid;gap:18px}
+header{display:grid;gap:6px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.draft{font-family:var(--f-mono);font-size:11px;padding:1px 8px;border:1px dashed var(--muted);border-radius:4px;letter-spacing:.02em;text-transform:none}
+h1{margin:0;font-size:clamp(21px,3vw,28px);font-weight:600;text-wrap:balance;letter-spacing:-.01em}
+.sub{margin:0;color:var(--muted);max-width:72ch}
+
+.switch{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;width:fit-content;max-width:100%;background:var(--surface)}
+.switch button{font:500 14px var(--f-sans);border:0;background:transparent;color:var(--muted);padding:9px 16px;cursor:pointer;display:flex;gap:8px;align-items:baseline}
+.switch button + button{border-left:1px solid var(--line)}
+.switch button .n{font-family:var(--f-mono);font-size:11px}
+.switch button[aria-pressed="true"]{background:var(--accent-soft);color:var(--fg)}
+.switch button[aria-pressed="true"] .n{color:var(--accent)}
+
+.rail{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.rail button{font:500 13px var(--f-sans);color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.rail button .n{font-family:var(--f-mono);font-size:11px}
+.rail button:hover{border-color:var(--accent);color:var(--fg)}
+.rail button.done{color:var(--fg)}
+.rail button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.stage svg{display:block;width:100%;min-width:680px;height:auto}
+.node rect{fill:var(--surface);stroke:var(--dim);stroke-width:1.5;transition:stroke .3s,fill .3s}
+.node text{fill:var(--muted);font-family:var(--f-sans);font-size:13px;transition:fill .3s}
+.node text.k{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+.node text.m{font-family:var(--f-mono);font-size:11px}
+.node.on rect{stroke:var(--accent);fill:var(--accent-soft)} .node.on text{fill:var(--fg)}
+.node.alert rect{stroke:var(--bad);fill:var(--bad-soft)} .node.alert text{fill:var(--fg)}
+.node.good rect{stroke:var(--ok);fill:var(--ok-soft)} .node.good text{fill:var(--fg)}
+.node.quiet rect{stroke:var(--muted);stroke-dasharray:4 4} .node.quiet text{fill:var(--fg)}
+.edge{stroke:var(--dim);stroke-width:1.6;fill:none;transition:stroke .3s}
+.edge.on{stroke:var(--accent);stroke-width:2.2;stroke-dasharray:6 5;animation:flow 1s linear infinite}
+.edge.alert{stroke:var(--bad);stroke-width:2.2;stroke-dasharray:6 5;animation:flow 1s linear infinite}
+.edge.blocked{stroke:var(--bad);stroke-width:1.6;stroke-dasharray:2 4}
+.arrow{fill:var(--dim)} .arrow.on{fill:var(--accent)} .arrow.alert{fill:var(--bad)}
+.elabel text{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+.elabel rect{fill:var(--surface)}
+.elabel.on text{fill:var(--accent)} .elabel.alert text{fill:var(--bad)}
+.gate{font-family:var(--f-mono);font-size:11px;font-weight:500}
+@keyframes flow{to{stroke-dashoffset:-22}}
+@media (prefers-reduced-motion: reduce){.edge.on,.edge.alert{animation:none}}
+
+.detail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:780px){.detail{grid-template-columns:1fr}}
+.story{display:grid;gap:10px;align-content:start;min-width:0}
+.who{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.story h2{margin:0;font-size:20px;font-weight:600;text-wrap:balance}
+.story p{margin:0;max-width:62ch}
+.open{border-left:3px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:0 6px 6px 0;font-size:14px}
+.open b{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);display:block}
+.evidence{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0;align-self:start}
+.evidence .bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.evidence pre{margin:0;padding:14px;font-family:var(--f-mono);font-size:12.5px;line-height:1.6;overflow-x:auto;white-space:pre;color:var(--fg);tab-size:2}
+.pill{font-family:var(--f-mono);font-size:11px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.hl-bad{color:var(--bad)} .hl-ok{color:var(--ok)} .hl-acc{color:var(--accent)} .hl-mut{color:var(--muted)}
+
+.controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.btns{display:flex;gap:8px}
+.btn{font:500 14px var(--f-sans);padding:8px 16px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.hint{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.foot{font-size:13px;color:var(--muted);max-width:80ch;margin:0}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">CMPE 295 · Demo path <span class="draft">illustrative · Campus Marketplace fixture</span></div>
+    <h1 id="scTitle"></h1>
+    <p class="sub" id="scSub"></p>
+  </header>
+
+  <div class="switch" role="group" aria-label="Scenario">
+    <button type="button" data-sc="0" id="sw0"><span class="n">1</span>Contract divergence</button>
+    <button type="button" data-sc="1" id="sw1"><span class="n">2</span>Dependency propagation</button>
+  </div>
+
+  <ol class="rail" id="rail"></ol>
+
+  <div class="stage"><svg id="diagram" role="img" aria-label="System diagram"></svg></div>
+
+  <div class="detail">
+    <div class="story">
+      <div class="who" id="who"></div>
+      <h2 id="title"></h2>
+      <p id="body"></p>
+      <div class="open" id="open" hidden><b>Open question</b><span id="openText"></span></div>
+    </div>
+    <div class="evidence">
+      <div class="bar"><span id="evName"></span><span id="evPill" class="pill"></span></div>
+      <pre id="evCode"></pre>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span class="hint">← → to step · 1 / 2 to switch scenario</span>
+    <div class="btns">
+      <button class="btn" id="prev" type="button">Back</button>
+      <button class="btn primary" id="next" type="button">Next</button>
+    </div>
+  </div>
+  <p class="foot">File names, fields and scores are illustrative, based on the Campus Marketplace replay fixture. They show the intended behavior of the pipeline, not measured results.</p>
+</div>
+
+<script>
+/* ---------- Scenario 1: contract divergence ---------- */
+const SC1 = {
+  title:"Catching a contract divergence before it reaches main",
+  sub:"Developer A's agent changes the shape of the listing API. Developer B's agent is building a page that reads the old shape. Neither change has been pushed.",
+  view:"0 0 900 380",
+  nodes:[
+    {id:"a",   x:24,  y:36,  w:236,h:88, k:"Developer A · agent", l:["Changes listing API response","feat/seller-profile"], m:[1]},
+    {id:"b",   x:24,  y:250, w:236,h:88, k:"Developer B · agent", l:["Builds listing detail page","feat/listing-detail"], m:[1]},
+    {id:"agent",x:356,y:140, w:196,h:90, k:"Memory agent", l:["Aggregate · validate","Score · notify"]},
+    {id:"scan",x:369, y:318, w:170,h:34, l:["cron: scan + commits"], m:[0], compact:true},
+    {id:"mem", x:648, y:118, w:228,h:134,k:"Shared memory", l:["Validated claims only","· (empty)",""], m:[1,2]},
+  ],
+  edges:[
+    {id:"ea", d:"M260 80 C 310 80, 320 170, 356 172", label:"context push"},
+    {id:"eb", d:"M260 282 C 305 282, 320 205, 356 200", label:"context push"},
+    {id:"escan", d:"M454 318 L454 232"},
+    {id:"emem", d:"M552 185 L646 185"},
+    {id:"enotify", d:"M368 230 C 340 300, 310 322, 262 322", label:"notify"},
+  ],
+  gate:{x:599,y:174},
+  steps:[
+   { tab:"Setup", who:"Scene", title:"Two agents, one API, no shared context",
+     body:"A's agent nests the listing inside data.listing so the response can also carry a seller profile. At the same time, B's agent writes a detail page that reads data.title and data.price directly. Neither branch is pushed, so git, review and CI can't see the clash yet.",
+     n:{a:"on",b:"on"}, e:{}, ev:["local diffs","uncommitted","warn"],
+     code:`<span class="hl-mut">// A · controllers/listingController.js</span>
+<span class="hl-bad">- res.json({ success: true, data: listing })</span>
+<span class="hl-ok">+ res.json({ success: true,
++   data: { listing, seller } })</span>
+
+<span class="hl-mut">// B · pages/ListingDetail.jsx  (new)</span>
+const { data } = await getListing(id);
+setTitle(data.title);
+setPrice(data.price.toFixed(2));`},
+   { tab:"Identification", who:"Stage 1", title:"Each agent publishes what it changed",
+     body:"Each local agent writes its in-progress changes to a context file and pushes it to the memory layer. A cron job also scans the repo for manual edits and new, unpushed commits, so human changes are covered too. Each update carries the author's active branch.",
+     n:{a:"on",b:"on",agent:"on",scan:"on"}, e:{ea:"on",eb:"on",escan:"on"},
+     open:"How often should the cron run? For now manual and agent changes are collected together; frequency gets tuned later.",
+     ev:["claim from agent A","source: local agent","ok"],
+     code:`{
+  <span class="hl-acc">"author"</span>:  "dev-a",
+  <span class="hl-acc">"branch"</span>:  "feat/seller-profile",
+  <span class="hl-acc">"source"</span>:  "agent_uncommitted",
+  <span class="hl-acc">"symbol"</span>:  "GET /api/listings/:id",
+  <span class="hl-acc">"change"</span>:  "response shape",
+  <span class="hl-acc">"before"</span>:  "data.{title,price,…}",
+  <span class="hl-acc">"after"</span>:   "data.listing.{title,…}"
+}`},
+   { tab:"Validation", who:"Stage 2", title:"Checked against the code before it enters shared memory",
+     body:"The memory agent checks A's claim against A's actual working tree: the controller really returns the new shape. It then runs the conflict checks across all active work. B's new page reads the old shape, so the update is flagged as a contract divergence. Only verified claims are written to shared memory.",
+     n:{agent:"alert",mem:"on"}, e:{emem:"on"}, mem:["· /listings/:id shape changed","· CONFLICT: ListingDetail.jsx"], gate:"ok",
+     open:"Valid drift: sometimes divergence is intentional, such as a planned migration. How do we avoid false positives?",
+     ev:["validation result","contract divergence","bad"],
+     code:`claim verified at A's tree   <span class="hl-ok">yes</span>
+
+check                    result
+───────────────────────  ─────────
+contract divergence      <span class="hl-bad">FAIL</span>
+  A returns data.listing.title
+  B reads   data.title
+dependency propagation   <span class="hl-bad">1 file</span>
+change overlap           <span class="hl-ok">pass</span>
+integration failure      <span class="hl-mut">phase 2</span>`},
+   { tab:"Scoring", who:"Stage 3", title:"How much does this matter?",
+     body:"The update is scored on the conflict type's priority, how directly B's work touches the changed symbol, and how active B is right now. Contract divergence is priority 1 and B is writing against the old shape at this moment, so the score clears the threshold.",
+     n:{agent:"alert",mem:"on"}, e:{}, mem:["· /listings/:id shape changed","· CONFLICT: ListingDetail.jsx"], gate:"ok",
+     ev:["score breakdown","0.86 > 0.70","bad"],
+     code:`factor                  weight  value
+──────────────────────  ──────  ─────
+conflict priority (P1)   0.40    1.00
+direct dependency        0.30    1.00
+B active on it now       0.20    0.80
+branch distance          0.10    0.00
+─────────────────────────────────────
+score                            <span class="hl-bad">0.86</span>
+threshold                        0.70`},
+   { tab:"Notification", who:"Stage 4", title:"B hears about it while still coding",
+     body:"Because the score is over the threshold, the memory agent notifies whoever works in that area: here, Developer B and B's agent. It happens before either branch is pushed, so the fix is one line now instead of a broken page after merge.",
+     n:{agent:"alert",b:"alert",mem:"on"}, e:{enotify:"alert"}, mem:["· /listings/:id shape changed","· CONFLICT: ListingDetail.jsx"], gate:"ok",
+     open:"Do we need role-based shared memory, so some teams aren't notified about other teams' changes?",
+     ev:["notification · to dev-b","high","bad"],
+     code:`⚠ GET /api/listings/:id is changing
+
+dev-a (feat/seller-profile, uncommitted)
+now returns:
+  data: { listing, seller }
+
+Your ListingDetail.jsx:14 reads
+data.title and data.price (old shape).`},
+   { tab:"Suggested action", who:"Stage 5", title:"A concrete next step, not just a warning",
+     body:"The notification comes with suggested actions. B's agent can update the reads directly, or B can check with A first if the shape might still change. When B's updated context comes back through the pipeline, the conflict clears in shared memory.",
+     n:{b:"good",agent:"on",mem:"good"}, e:{eb:"on",emem:"on"}, mem:["· /listings/:id shape changed","· ListingDetail.jsx: resolved"], gate:"ok",
+     ev:["suggested actions","resolved","ok"],
+     code:`1. <span class="hl-ok">Update the reads</span> (agent can apply)
+   const { listing } = data;
+   setTitle(listing.title);
+
+2. Confirm with dev-a that the new
+   shape is final before merging
+
+3. Add a test for the detail page`},
+   { tab:"Without it", who:"Contrast", title:"What happens without the memory layer",
+     body:"Both branches build and pass their own tests. The clash only appears after both merge, as a crash on the detail page, when the context behind each change has gone cold and someone has to trace it back.",
+     n:{a:"on",b:"on"}, e:{ea:"blocked",eb:"blocked"}, gate:"none",
+     ev:["browser console · main after merge","crash","bad"],
+     code:`<span class="hl-bad">Uncaught TypeError:</span> Cannot read
+properties of undefined (reading 'toFixed')
+    at ListingDetail (ListingDetail.jsx:15)
+
+<span class="hl-mut">Found in QA after both PRs were approved.</span>`}
+  ]
+};
+
+/* ---------- Scenario 2: dependency propagation ---------- */
+const SC2 = {
+  title:"One change, two teammates affected, no shared files",
+  sub:"Developer A's agent stores listing prices in cents. Two teammates depend on the price field without ever opening A's file. A file-overlap check sees nothing; the memory layer follows the dependency.",
+  view:"0 0 900 400",
+  nodes:[
+    {id:"a",   x:24,  y:152, w:236,h:96, k:"Developer A · agent", l:["Stores price in cents","models/Listing.js","+ migration"], m:[1,2]},
+    {id:"agent",x:332,y:152, w:196,h:96, k:"Memory agent", l:["Verify claim","Trace dependents"]},
+    {id:"mem", x:332, y:18,  w:196,h:100,k:"Shared memory", l:["· (empty)",""], m:[0,1]},
+    {id:"scan",x:345, y:338, w:170,h:34, l:["cron: scan + commits"], m:[0], compact:true},
+    {id:"b",   x:640, y:24,  w:236,h:88, k:"Developer B · agent", l:["Adds price-range filter","searchService.js"], m:[1]},
+    {id:"c",   x:640, y:156, w:236,h:88, k:"Developer C · agent", l:["Restyles listing cards","ListingCard.jsx"], m:[1]},
+    {id:"d",   x:640, y:288, w:236,h:88, k:"Developer D · agent", l:["Edits email templates","emails/*.hbs"], m:[1]},
+  ],
+  edges:[
+    {id:"ea", d:"M260 200 L330 200", label:"claim"},
+    {id:"emem", d:"M430 152 L430 120"},
+    {id:"escan", d:"M430 338 L430 250"},
+    {id:"eb", d:"M528 176 C 590 176, 590 68, 638 68", label:"notify B"},
+    {id:"ec", d:"M528 200 L638 200", label:"notify C"},
+    {id:"ed", d:"M528 224 C 590 224, 590 332, 638 332", label:"no alert"},
+  ],
+  gate:{x:440,y:140, anchor:"start"},
+  steps:[
+   { tab:"Setup", who:"Scene", title:"A small model change with a wide reach",
+     body:"A's agent switches Listing.price from dollars to integer cents to avoid rounding errors, and updates the schema, a migration and A's own controller. Meanwhile B's agent adds a price-range filter to search, C's agent restyles the listing card, and D edits email templates. None of B, C or D opens Listing.js.",
+     n:{a:"on",b:"on",c:"on",d:"on"}, e:{}, ev:["local diff · developer A","uncommitted","warn"],
+     code:`<span class="hl-mut">// A · models/Listing.js</span>
+<span class="hl-bad">- price: { type: Number }  // dollars</span>
+<span class="hl-ok">+ price: { type: Number,
++   validate: Number.isInteger } // cents</span>
+
+<span class="hl-mut">// A · migrations/0007_price_cents.js</span>
+<span class="hl-ok">+ price = Math.round(price * 100)</span>`},
+   { tab:"Identification", who:"Stage 1", title:"A publishes the change; everyone publishes their working set",
+     body:"A's agent pushes a claim about the change. The other agents' context files already tell the memory layer which files and symbols each teammate is working with. The cron job picks up manual edits and unpushed commits the same way as in scenario 1.",
+     n:{a:"on",agent:"on",scan:"on"}, e:{ea:"on",escan:"on"},
+     ev:["claim from agent A","source: local agent","ok"],
+     code:`{
+  <span class="hl-acc">"author"</span>:  "dev-a",
+  <span class="hl-acc">"symbol"</span>:  "Listing.price",
+  <span class="hl-acc">"change"</span>:  "unit",
+  <span class="hl-acc">"before"</span>:  "dollars (float)",
+  <span class="hl-acc">"after"</span>:   "cents (integer)",
+  <span class="hl-acc">"files"</span>:   ["models/Listing.js",
+              "migrations/0007_price_cents.js"]
+}`},
+   { tab:"Validation", who:"Stage 2", title:"Verify the claim, then follow the dependency",
+     body:"First the memory agent checks the claim against A's tree: the schema and migration really changed. Then it traces every read of Listing.price in the teammates' active work. B's search query compares price against dollar values. C's card prints price as dollars. D's templates never read price.",
+     n:{agent:"alert",mem:"on",b:"alert",c:"alert"}, e:{emem:"on"}, mem:["· Listing.price → cents","· 2 dependents found"], gate:"ok",
+     ev:["dependency trace","2 affected · 1 clear","bad"],
+     code:`claim verified at A's tree   <span class="hl-ok">yes</span>
+
+reads of Listing.price in active work
+──────────────────────────────────────
+B searchService.js:48
+  { price: { $gte: minPrice } }   <span class="hl-bad">dollars</span>
+C ListingCard.jsx:22
+  \`$\${listing.price}\`              <span class="hl-bad">dollars</span>
+D emails/*.hbs
+  no reference                    <span class="hl-ok">clear</span>`},
+   { tab:"Scoring", who:"Stage 3", title:"Each teammate gets their own score",
+     body:"The score is computed per affected person, not per change. B's filter fails silently and returns wrong results, so it scores highest. C's card shows prices 100 times too large, which is visible but still wrong. D has no dependency and scores near zero.",
+     n:{agent:"alert",mem:"on",b:"alert",c:"alert",d:"quiet"}, e:{}, mem:["· Listing.price → cents","· 2 dependents found"], gate:"ok",
+     ev:["scores · threshold 0.70","2 over threshold","bad"],
+     code:`teammate  reason                     score
+────────  ─────────────────────────  ─────
+B         query compares wrong unit  <span class="hl-bad">0.81</span>
+          (fails silently)
+C         display off by 100x        <span class="hl-bad">0.74</span>
+D         no dependency              <span class="hl-ok">0.02</span>`},
+   { tab:"Notification", who:"Stage 4", title:"The right two people hear about it",
+     body:"B and C each get a message written for their own code. D is not interrupted. Neither B nor C touched A's file, so this is the case a file-overlap check can't catch.",
+     n:{agent:"alert",mem:"on",b:"alert",c:"alert",d:"quiet"}, e:{eb:"alert",ec:"alert",ed:"blocked"}, mem:["· Listing.price → cents","· 2 dependents found"], gate:"ok",
+     open:"Should the notification go to the developer, the developer's agent, or both? Agents tolerate more alerts than people do.",
+     ev:["notifications","to dev-b, dev-c","bad"],
+     code:`→ dev-b
+⚠ Listing.price is moving to cents (dev-a).
+searchService.js:48 compares it to
+minPrice/maxPrice in dollars.
+
+→ dev-c
+⚠ Listing.price is moving to cents (dev-a).
+ListingCard.jsx:22 prints it as dollars.`},
+   { tab:"Suggested action", who:"Stage 5", title:"Fixes that match each teammate's code",
+     body:"B's agent converts the filter bounds to cents. C's agent switches to a shared formatter. Both adaptations can be prepared on side branches and kept only if A's change actually lands, which is the speculative-adaptation idea we're exploring.",
+     n:{a:"on",agent:"on",mem:"good",b:"good",c:"good",d:"quiet"}, e:{eb:"on",ec:"on"}, mem:["· Listing.price → cents","· B, C adapted"], gate:"ok",
+     ev:["suggested actions","resolved","ok"],
+     code:`B · searchService.js
+  <span class="hl-ok">$gte: toCents(minPrice)</span>
+
+C · ListingCard.jsx
+  <span class="hl-ok">{formatPrice(listing.price)}</span>
+  <span class="hl-mut">// shared util: cents → "$25.00"</span>
+
+Both: add a test with a $25.00 listing`},
+   { tab:"Compared to file overlap", who:"Contrast", title:"Why a file-overlap check isn't enough",
+     body:"A GitHub-style file-overlap alert compares which files each branch touches. Here no two developers share a file, so it raises nothing. After merge, a $25 item shows as $2500 and the price filter hides most listings, and someone has to trace both bugs back to one model change.",
+     n:{a:"on",b:"on",c:"on",d:"on"}, e:{}, gate:"none",
+     ev:["file-overlap check vs this system","0 vs 2 alerts","warn"],
+     code:`files touched
+──────────────────────────────────────
+A  models/Listing.js, migrations/0007…
+B  services/searchService.js
+C  components/ListingCard.jsx
+D  emails/*.hbs
+
+file-overlap alerts       <span class="hl-bad">0</span>
+dependency-aware alerts   <span class="hl-ok">2</span> (B, C)
+
+after merge: <span class="hl-bad">$25 item shows "$2500"</span>
+             <span class="hl-bad">filter "under $100" → 3 results</span>`}
+  ]
+};
+
+const SCENARIOS=[SC1,SC2];
+const SVGNS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id);
+let sc=0, cur=0;
+
+function el(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+function buildDiagram(S){
+  const svg=$("diagram"); svg.innerHTML=""; svg.setAttribute("viewBox",S.view);
+  const defs=el("defs",{},svg);
+  [["dim","arrow"],["on","arrow on"],["alert","arrow alert"]].forEach(([id,cls])=>{
+    const m=el("marker",{id:"m-"+id,viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
+    el("path",{d:"M0,0L10,5L0,10z",class:cls},m);
+  });
+  const gE=el("g",{},svg), gL=el("g",{},svg), gN=el("g",{},svg);
+  S.edges.forEach(ed=>{ el("path",{id:"e-"+ed.id,class:"edge",d:ed.d,"marker-end":"url(#m-dim)"},gE); });
+  S.nodes.forEach(n=>{
+    const g=el("g",{class:"node",id:"n-"+n.id},gN);
+    el("rect",{x:n.x,y:n.y,width:n.w,height:n.h,rx:n.compact?6:8},g);
+    let y=n.y+(n.compact?22:22);
+    if(n.k){ const t=el("text",{class:"k",x:n.x+16,y:y},g); t.textContent=n.k; y+=24; }
+    (n.l||[]).forEach((line,i)=>{
+      const mono=(n.m||[]).includes(i);
+      const t=el("text",{x:n.x+(n.compact?14:16),y:y,class:mono?"m":"",id:`t-${n.id}-${i}`},g); t.textContent=line;
+      y+=mono?18:20;
+    });
+  });
+  // edge labels at path midpoints, with a background so lines never run through text
+  S.edges.filter(ed=>ed.label).forEach(ed=>{
+    const p=$("e-"+ed.id), L=p.getTotalLength(), pt=p.getPointAtLength(L*(ed.at||0.5));
+    const g=el("g",{class:"elabel",id:"l-"+ed.id},gL);
+    const r=el("rect",{rx:3},g); const t=el("text",{x:pt.x,y:pt.y+3.5,"text-anchor":"middle"},g); t.textContent=ed.label;
+    const b=t.getBBox(); r.setAttribute("x",b.x-4); r.setAttribute("y",b.y-2); r.setAttribute("width",b.width+8); r.setAttribute("height",b.height+4);
+  });
+  const gt=el("text",{id:"gate",class:"gate",x:S.gate.x,y:S.gate.y,"text-anchor":S.gate.anchor||"middle"},svg);
+}
+
+function renderRail(){
+  const rail=$("rail"); rail.innerHTML="";
+  SCENARIOS[sc].steps.forEach((s,i)=>{
+    const li=document.createElement("li"), b=document.createElement("button");
+    b.type="button"; b.innerHTML=`<span class="n">${i}</span>${s.tab}`;
+    b.addEventListener("click",()=>go(i)); li.appendChild(b); rail.appendChild(li);
+  });
+}
+
+function setScenario(i, step){
+  sc=i; const S=SCENARIOS[sc];
+  $("sw0").setAttribute("aria-pressed",sc===0); $("sw1").setAttribute("aria-pressed",sc===1);
+  $("scTitle").textContent=S.title; $("scSub").textContent=S.sub;
+  buildDiagram(S); renderRail(); go(step||0);
+  try{ history.replaceState(null,"", sc===1?"#dependency":"#contract"); }catch(e){}
+}
+
+function go(i){
+  const S=SCENARIOS[sc];
+  cur=Math.max(0,Math.min(S.steps.length-1,i));
+  const s=S.steps[cur];
+  [...$("rail").querySelectorAll("button")].forEach((b,j)=>{
+    if(j===cur) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current");
+    b.classList.toggle("done",j<cur);
+  });
+  S.nodes.forEach(n=>{const g=$("n-"+n.id); g.setAttribute("class","node"+(s.n[n.id]?" "+s.n[n.id]:""));});
+  S.edges.forEach(ed=>{
+    const p=$("e-"+ed.id), st=s.e[ed.id];
+    p.setAttribute("class","edge"+(st?" "+st:""));
+    p.setAttribute("marker-end", st==="on"?"url(#m-on)":(st==="alert"||st==="blocked")?"url(#m-alert)":"url(#m-dim)");
+    const lab=$("l-"+ed.id); if(lab) lab.setAttribute("class","elabel"+(st==="on"?" on":(st==="alert"||st==="blocked")?" alert":""));
+  });
+  // shared memory lines
+  const memNode=S.nodes.find(n=>n.id==="mem"); const offset=memNode.k&&memNode.l.length===3?1:0;
+  const m=s.mem||["· (empty)",""];
+  const t0=$(`t-mem-${offset}`), t1=$(`t-mem-${offset+1}`);
+  if(t0) t0.textContent=m[0]; if(t1) t1.textContent=m[1];
+  const gate=$("gate");
+  if(s.gate==="ok"){gate.textContent="verified ✓";gate.setAttribute("fill","var(--ok)");}
+  else if(s.gate==="none"){gate.textContent=sc===0?"no memory layer":"";gate.setAttribute("fill","var(--bad)");}
+  else {gate.textContent="gate";gate.setAttribute("fill","var(--muted)");}
+  $("who").textContent=s.who; $("title").textContent=s.title; $("body").textContent=s.body;
+  $("open").hidden=!s.open; $("openText").textContent=s.open||"";
+  $("evName").textContent=s.ev[0]; const p=$("evPill"); p.textContent=s.ev[1]; p.className="pill "+s.ev[2];
+  $("evCode").innerHTML=s.code;
+  $("prev").disabled=cur===0; $("next").textContent=cur===S.steps.length-1?(sc===0?"Next scenario":"Restart"):"Next";
+}
+
+$("prev").addEventListener("click",()=>go(cur-1));
+$("next").addEventListener("click",()=>{
+  const S=SCENARIOS[sc];
+  if(cur<S.steps.length-1) go(cur+1);
+  else if(sc===0) setScenario(1,0); else go(0);
+});
+$("sw0").addEventListener("click",()=>setScenario(0));
+$("sw1").addEventListener("click",()=>setScenario(1));
+document.addEventListener("keydown",e=>{
+  if(e.target.closest&&e.target.closest("input,textarea")) return;
+  if(e.key==="ArrowRight") go(cur+1);
+  else if(e.key==="ArrowLeft") go(cur-1);
+  else if(e.key==="1") setScenario(0);
+  else if(e.key==="2") setScenario(1);
+});
+setScenario(location.hash==="#dependency"?1:0);
+</script>
+
+</body>
+</html>
