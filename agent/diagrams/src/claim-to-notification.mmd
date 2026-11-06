@@ -1,0 +1,89 @@
+flowchart TD
+    subgraph INTAKE["1. Observe and verify"]
+        WO["WORK_OBSERVED<br/>Workspace detects candidate work"]
+        CM["CHANGE_MANIFEST<br/>Metadata and evidence references"]
+        VG["VERIFICATION_GATE<br/>Deterministic evidence checks"]
+        VD["VERIFICATION_DECISION<br/>Durable decision and reasons"]
+        DS{"DECISION_STATUS"}
+        RJ["REJECTED<br/>No admitted claim"]
+        ME["NEEDS_MORE_EVIDENCE<br/>Obtain additional evidence"]
+        AC["ADMITTED_CLAIM<br/>Immutable verified projection"]
+
+        WO -->|observation or explicit publish intent| CM
+        CM -->|untrusted producer input| VG
+        VG --> VD
+        VD --> DS
+        DS -->|rejected| RJ
+        DS -->|needs_more_evidence| ME
+        ME -->|retry with additional evidence or submit a new observation| CM
+        DS -->|verified| AC
+    end
+
+    subgraph LIFECYCLE["2. Store and manage claim lifecycle"]
+        SC["SHARED_CONTEXT<br/>Store immutable claim and lifecycle record"]
+        ACT["ACTIVE<br/>Current verified in-progress context"]
+        SUP["SUPERSEDED<br/>Replaced by a newer verified claim"]
+        WD["WITHDRAWN<br/>Work explicitly abandoned"]
+        EX["EXPIRED<br/>Freshness policy no longer satisfied"]
+        IP["INTEGRATED_PENDING_COVERAGE<br/>Merged, but some relevant workspaces are behind"]
+        CV{"ALL_RELEVANT_WORKSPACES<br/>CONTAIN_INTEGRATION_REVISION?"}
+        CON["CONVERGED<br/>Relevant workspaces are on the same repository state"]
+        RV["REVERTED<br/>Mainline no longer contains the integrated result"]
+        HS["HISTORICAL_CONTEXT<br/>Retained for audit and provenance"]
+        QR["AUTHORIZED_RETRIEVAL<br/>Repository members and authorized agents"]
+
+        SC --> ACT
+        SC -->|permitted relevant context| QR
+        ACT -->|newer verified claim| SUP
+        ACT -->|authorized withdrawal| WD
+        ACT -->|freshness deadline passes| EX
+        ACT -->|verified mainline integration| IP
+        IP --> CV
+        CV -->|no - wait for new workspace evidence| IP
+        CV -->|yes| CON
+        IP -->|verified mainline revert| RV
+        SUP --> HS
+        WD --> HS
+        EX --> HS
+        CON --> HS
+        RV --> HS
+    end
+
+    subgraph NOTIFICATION["3. Analyze relevance and notify when supervision is needed"]
+        AN["CONFLICT_ANALYSIS<br/>Find affected workspaces and assess risk"]
+        AW{"AFFECTED_WORKSPACE?"}
+        RT{"RISK_MEETS_REPOSITORY_THRESHOLD?"}
+        NI["CONTEXT_ONLY<br/>Remain queryable without interruption"]
+        OR["ORCHESTRATION<br/>Create and route targeted alert"]
+        AL["ALERT<br/>Finding, evidence, recipient reason,<br/>and requested next step"]
+        NB["NOTIFICATION_BOUNDARY<br/>Deliver to affected user or agent"]
+        DR["DURABLE_RETRY<br/>Retain until delivery is acknowledged"]
+        AO["ALERT_OUTCOME<br/>Acknowledgement, dismissal,<br/>coordination, or follow-up"]
+
+        AN --> AW
+        AW -->|no| NI
+        AW -->|yes| RT
+        RT -->|below threshold| NI
+        RT -->|meets or exceeds threshold| OR
+        OR --> AL
+        AL -->|durable handoff| NB
+        NB -->|temporary delivery failure| DR
+        DR -->|retry idempotently| NB
+        NB -->|delivered| AO
+    end
+
+    AC -->|durable handoff| SC
+    ACT -->|current in-progress context| AN
+    IP -->|workspace coverage risk| AN
+
+    classDef decision fill:#fff4cc,stroke:#8a6d00,color:#2d2500;
+    classDef success fill:#dff5e1,stroke:#247a35,color:#123d1b;
+    classDef terminal fill:#eeeeee,stroke:#666666,color:#222222;
+    classDef stop fill:#f7e2e2,stroke:#9a3838,color:#4a1717;
+    classDef notify fill:#dfeeff,stroke:#356da8,color:#183653;
+
+    class DS,CV,AW,RT decision;
+    class AC,SC,ACT,IP,CON,QR success;
+    class SUP,WD,EX,RV,HS terminal;
+    class RJ,ME,NI stop;
+    class OR,AL,NB,DR,AO notify;

@@ -1,0 +1,20 @@
+flowchart LR
+    CA["CODING_AGENT<br/>Developer or coding agent"]
+    WV["WORKSPACE_VERTICAL<br/>Observe and describe work"]
+    VV["VERIFICATION_VERTICAL<br/>Apply evidence gate"]
+    SC["SHARED_CONTEXT<br/>Store admitted claims"]
+    AN["ANALYSIS_VERTICAL<br/>Detect impact and risk"]
+    OR["ORCHESTRATION_VERTICAL<br/>Coordinate and route"]
+    NB["NOTIFICATION_BOUNDARY<br/>Deliver alerts and outcomes"]
+    AD["ADAPTATION_VERTICAL<br/>Prepare approved proposal"]
+
+    CA -->|working activity and publish intent| WV
+    WV -->|ChangeManifest and evidence refs| VV
+    VV -->|VerificationDecision and AdmittedClaim| SC
+    SC -->|verified context| AN
+    AN -->|ConflictFinding and RiskAssessment| OR
+    OR -->|targeted Alert or evidence request| NB
+    NB -->|evidence-backed guidance| CA
+    NB -->|AlertOutcome| OR
+    OR -->|human-approved request| AD
+    AD -->|reviewable proposal| OR
